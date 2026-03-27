@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home - CVRgram</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<div class="app">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">CVRgram</div>
+
+        <a href="/home">
+            <i data-lucide="home"></i>
+            <span>Home</span>
+        </a>
+
+        <a href="/search">
+            <i data-lucide="search"></i>
+            <span>Search</span>
+        </a>
+
+        <a href="/profile">
+            <i data-lucide="user"></i>
+            <span>Profile</span>
+        </a>
+
+        <a href="/chat">
+            <i data-lucide="message-circle"></i>
+            <span>Messages</span>
+        </a>
+
+        <a href="/">
+            <i data-lucide="log-out"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+
+    <!-- Main Feed -->
+    <div class="main">
+
+        <!-- Create Post Card -->
+        <div class="post-card">
+            <div class="post-header">
+                Create Post
+            </div>
+
+            <div class="post-content">
+                <textarea id="postContent" placeholder="Share something with your college..."></textarea>
+                <button onclick="createPost()">Post</button>
+            </div>
+        </div>
+
+        <!-- Feed Container -->
+        <div id="feed"></div>
+
+    </div>
+
+</div>
+
+<script>
+    lucide.createIcons();
+    loadPosts();
+</script>
+
+<script src="/script.js"></script>
+
+</body>
+</html>

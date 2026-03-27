@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<div class="app">
+
+    <div class="sidebar">
+        <div class="logo">CVRgram</div>
+
+        <a href="/home">
+            <i data-lucide="home"></i>
+            <span>Home</span>
+        </a>
+
+        <a href="/search">
+            <i data-lucide="search"></i>
+            <span>Search</span>
+        </a>
+
+        <a href="/profile">
+            <i data-lucide="user"></i>
+            <span>Profile</span>
+        </a>
+
+        <a href="/chat">
+            <i data-lucide="message-circle"></i>
+            <span>Messages</span>
+        </a>
+
+        <a href="/">
+            <i data-lucide="log-out"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+
+    <div class="main">
+        <div class="card">
+            <h3>Chat</h3>
+            <input type="text" id="messageInput" placeholder="Type your message">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+
+        <div id="chatArea"></div>
+    </div>
+
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+
+<script src="/script.js"></script>
+
+</body>
+</html>

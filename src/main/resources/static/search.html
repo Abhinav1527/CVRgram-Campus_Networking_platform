@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search - CVRgram</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<div class="app">
+
+    <div class="sidebar">
+        <div class="logo">CVRgram</div>
+
+        <a href="/home"><i data-lucide="home"></i>Home</a>
+        <a href="/search"><i data-lucide="search"></i>Search</a>
+        <a href="/profile"><i data-lucide="user"></i>Profile</a>
+        <a href="/chat"><i data-lucide="message-circle"></i>Messages</a>
+        <a href="/"><i data-lucide="log-out"></i>Logout</a>
+    </div>
+
+    <div class="main">
+
+        <div class="post-card">
+            <div class="post-header">Search</div>
+            <div class="post-content">
+                <input type="text" id="searchInput" placeholder="Search students or posts...">
+                <button onclick="performSearch()">Search</button>
+            </div>
+        </div>
+
+        <div id="searchResults"></div>
+
+    </div>
+
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+
+<script src="/script.js"></script>
+
+</body>
+</html>

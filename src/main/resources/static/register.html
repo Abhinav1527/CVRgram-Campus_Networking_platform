@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CVRgram Register</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div style="display:flex;justify-content:center;align-items:center;height:100vh;">
+    <div class="card" style="width:350px;">
+        <h2>Create Account</h2>
+
+        <input type="text" id="username" placeholder="Username">
+        <input type="text" id="department" placeholder="Department">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+
+        <button onclick="register()">Register</button>
+
+        <p style="margin-top:15px;">
+            Already have account?
+            <a href="/auth/login">Login</a>
+        </p>
+    </div>
+</div>
+
+<script src="/script.js"></script>
+
+</body>
+</html>
