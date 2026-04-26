@@ -1,73 +1,368 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Profile</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | CVRgram</title>
     <link rel="stylesheet" href="/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-<div class="sidebar">
-    <div class="logo">CVRgram</div>
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/home" class="logo">CVRgram</a>
+        </div>
+        <div class="nav-center">
+            <a href="/home" class="nav-item">
+                <i data-lucide="home"></i>
+                <span>Home</span>
+            </a>
+            <a href="/search" class="nav-item">
+                <i data-lucide="compass"></i>
+                <span>Explore</span>
+            </a>
+            <a href="/chat" class="nav-item">
+                <i data-lucide="message-circle"></i>
+                <span>Messaging</span>
+            </a>
+            <a href="/notifications" class="nav-item">
+                <i data-lucide="bell"></i>
+                <span>Notifications</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="/profile">
+                <img src="https://ui-avatars.com/api/?name=User&background=random" class="nav-avatar" id="navAvatar" alt="Profile">
+            </a>
+            <a href="/" style="color: var(--text-light);" title="Logout">
+                <i data-lucide="log-out"></i>
+            </a>
+        </div>
+    </nav>
 
-    <a href="/home">
-        <i data-lucide="home"></i>
-        <span>Home</span>
-    </a>
+    <!-- Main Content -->
+    <div class="app-container" style="grid-template-columns: 1fr 300px;">
+        
+        <main>
+            <div class="card">
+                <!-- Background Photo -->
+                <div id="profileBg" style="height: 200px; background: linear-gradient(135deg, #a0b4b7, #7a9ca0); position: relative; overflow: hidden; background-size: cover; background-position: center;">
+                    <div id="bgUploadBtn" style="position: absolute; bottom: 16px; right: 16px; background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10;" onclick="document.getElementById('bgFileInput').click()">
+                        <i data-lucide="camera" style="width: 20px; height: 20px; color: var(--text-dark);"></i>
+                    </div>
+                    <input type="file" id="bgFileInput" accept="image/*" style="display: none;" onchange="uploadBackground(this)">
+                </div>
+                <div style="padding: 0 24px 24px; position: relative;">
+                    <!-- Profile Photo (Instagram-style) -->
+                    <div id="avatarWrapper" style="position: relative; width: 152px; margin-top: -76px;">
+                        <img src="https://ui-avatars.com/api/?name=User&background=random" id="profileAvatar" style="width: 152px; height: 152px; border-radius: 50%; border: 4px solid var(--white); background: #ccc; object-fit: cover; display: block;" alt="Profile">
+                        <div id="avatarBadge" style="position: absolute; bottom: 8px; right: 8px; background: var(--primary-blue, #0a66c2); border: 3px solid var(--white); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2);" onclick="document.getElementById('avatarFileInput').click()">
+                            <i data-lucide="camera" style="width: 16px; height: 16px; color: #fff;"></i>
+                        </div>
+                        <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="uploadProfilePhoto(this)">
+                    </div>
+                    <button id="editProfileBtn" class="btn-primary" style="position: absolute; top: 95px; right: 24px;" onclick="openEditProfileModal()"><i data-lucide="edit-2" style="width: 16px; height: 16px;"></i> Edit profile</button>
+                    <button id="followBtn" class="btn-primary" style="position: absolute; top: 95px; right: 24px; display: none;" onclick="toggleFollow()">Follow</button>
+                    
+                    <h1 id="profileName" style="font-size: 24px; font-weight: 600; margin-top: 16px;">Loading...</h1>
+                    <p id="profileDept" style="font-size: 16px; color: var(--text-dark); margin-top: 4px;">Department</p>
+                    <p id="profileEmail" style="font-size: 14px; color: var(--text-light); margin-top: 4px;">Email</p>
+                    
+                    <div style="display: flex; gap: 20px; margin-top: 12px; font-size: 14px; color: var(--text-dark);">
+                        <span style="cursor: pointer;"><strong id="followerCount">0</strong> followers</span>
+                        <span style="cursor: pointer;"><strong id="followingCount">0</strong> following</span>
+                    </div>
+                    
+                    <div id="actionBtns" style="margin-top: 16px; display: flex; gap: 8px;">
+                        <button class="btn-primary">Open to</button>
+                        <button class="btn-outline" style="margin-top: 0;">Add profile section</button>
+                    </div>
+                </div>
+            </div>
 
-    <a href="/search">
-        <i data-lucide="search"></i>
-        <span>Search</span>
-    </a>
+            <div class="card" style="padding: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h2 style="font-size: 20px; font-weight: 600; margin: 0;">About</h2>
+                    <i id="editAboutBtn" data-lucide="edit-2" onclick="openEditAboutModal()" style="width: 18px; height: 18px; color: var(--text-light); cursor: pointer;" title="Edit About"></i>
+                </div>
+                <p id="profileBio" style="font-size: 14px; white-space: pre-wrap;">Student at CVR College of Engineering.</p>
+            </div>
 
-    <a href="/profile">
-        <i data-lucide="user"></i>
-        <span>Profile</span>
-    </a>
+            <!-- User's Post Feed -->
+            <div id="feed" style="margin-top: 24px;"></div>
+        </main>
 
-    <a href="/chat">
-        <i data-lucide="message-circle"></i>
-        <span>Messages</span>
-    </a>
+        <aside class="right-sidebar">
+             <div class="card widget">
+                <div class="widget-title">Profile language</div>
+                <div style="font-size: 14px; color: var(--text-light); display: flex; justify-content: space-between;">
+                    English <i data-lucide="edit-2" style="width: 16px; height: 16px;"></i>
+                </div>
+                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 16px 0;">
+                <div class="widget-title" style="margin-bottom: 8px;">Public profile & URL</div>
+                <div style="font-size: 14px; color: var(--text-light); display: flex; justify-content: space-between;">
+                    www.cvrgram.com/in/user <i data-lucide="edit-2" style="width: 16px; height: 16px;"></i>
+                </div>
+            </div>
+        </aside>
 
-    <a href="/">
-        <i data-lucide="log-out"></i>
-        <span>Logout</span>
-    </a>
-</div>
+    </div>
 
-    <div class="main">
-        <div class="card">
-            <h2>User Profile</h2>
-            <p>Name: <span id="name"></span></p>
-            <p>Email: <span id="email"></span></p>
-            <p>Department: <span id="department"></span></p>
+    <!-- Edit Profile Modal -->
+    <div class="modal-overlay" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Profile</h2>
+                <i data-lucide="x" class="modal-close" onclick="closeEditProfileModal()"></i>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Full Name</label>
+                    <input type="text" id="editName" class="form-control" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Headline</label>
+                    <input type="text" id="editHeadline" class="form-control" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Department</label>
+                    <input type="text" id="editDepartment" class="form-control" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">About (Bio)</label>
+                    <textarea id="editBio" class="form-control" rows="4" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px; resize: vertical;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline" style="margin-right: 12px;" onclick="closeEditProfileModal()">Cancel</button>
+                <button class="btn-primary" onclick="submitProfileUpdate()">Save changes</button>
+            </div>
         </div>
     </div>
 
-</div>
+    <!-- Edit About Modal -->
+    <div class="modal-overlay" id="editAboutModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Edit About</h2>
+                <i data-lucide="x" class="modal-close" onclick="closeEditAboutModal()"></i>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">About (Bio)</label>
+                    <textarea id="editAboutBio" class="form-control" rows="6" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px; resize: vertical; font-size: 14px;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline" style="margin-right: 12px;" onclick="closeEditAboutModal()">Cancel</button>
+                <button class="btn-primary" onclick="submitAboutUpdate()">Save</button>
+            </div>
+        </div>
+    </div>
 
-<script>
-    lucide.createIcons();
-</script>
+    <!-- Custom Unfollow Modal -->
+    <div class="modal-overlay" id="unfollowModal">
+        <div class="modal-content" style="max-width: 320px; text-align: center; padding: 32px; border-radius: 12px;">
+            <img id="unfollowAvatar" src="" style="width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 20px; display: block; object-fit: cover; border: 3px solid var(--white); box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <p id="unfollowText" style="font-size: 14px; color: var(--text-dark); margin-bottom: 24px; line-height: 1.6;"></p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn-primary" style="background: #ed4956; border: none; width: 100%; padding: 12px; font-weight: 700; border-radius: 8px;" onclick="confirmUnfollowAction()">Unfollow</button>
+                <button class="btn-outline" style="width: 100%; border: none; font-weight: 500; color: var(--text-dark); padding: 8px;" onclick="closeUnfollowModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
 
-<script src="/script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/script.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUserId = urlParams.get('userId');
+        const fetchUrl = targetUserId ? `/api/users/${targetUserId}` : "/profile/data";
 
-<script>
-    fetch("/profile/data")
-        .then(res => res.json())
-        .then(user => {
+        fetch(fetchUrl)
+            .then(res => {
+                if (!res.ok) {
+                    if (res.status === 401) {
+                        window.location.href = "/login";
+                        return null;
+                    }
+                    throw new Error("Failed to fetch user data");
+                }
+                return res.json();
+            })
+            .then(user => {
+                if (!user) return; // Already handled by redirect
+                
+                const nameStr = user.username || 'Student';
+                const avatarUrl = user.profilePhotoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(nameStr)}&background=random`;
+                
+                document.getElementById("profileName").innerText = nameStr;
+                document.getElementById("profileEmail").innerText = user.email || '';
+                document.getElementById("profileDept").innerText = (user.headline ? user.headline + " | " : "") + (user.department || 'Department');
+                document.getElementById("profileAvatar").src = avatarUrl;
 
-            if (!user) {
-                window.location.href = "/auth/login";
+                // Background photo
+                if (user.backgroundPhotoUrl) {
+                    document.getElementById("profileBg").style.background = `url('${user.backgroundPhotoUrl}') center/cover no-repeat`;
+                }
+                
+                if (!targetUserId) {
+                    const navAvatar = document.getElementById("navAvatar");
+                    if(navAvatar) navAvatar.src = avatarUrl;
+                } else {
+                    // Hide all edit controls for other users
+                    const editBtn = document.getElementById("editProfileBtn");
+                    if (editBtn) editBtn.style.display = "none";
+                    const actionBtns = document.getElementById("actionBtns");
+                    if (actionBtns) actionBtns.style.display = "none";
+                    const editAboutBtn = document.getElementById("editAboutBtn");
+                    if (editAboutBtn) editAboutBtn.style.display = "none";
+                    // Hide photo upload badges
+                    const bgUploadBtn = document.getElementById("bgUploadBtn");
+                    if (bgUploadBtn) bgUploadBtn.style.display = "none";
+                    const avatarBadge = document.getElementById("avatarBadge");
+                    if (avatarBadge) avatarBadge.style.display = "none";
+
+                    // Show Follow button for other users
+                    const followBtn = document.getElementById("followBtn");
+                    if (followBtn) {
+                        followBtn.style.display = "block";
+                        // Check follow status
+                        fetch(`/api/follow/status/${targetUserId}`)
+                            .then(r => r.json())
+                            .then(status => {
+                                updateFollowButtonUI(status.status);
+                            });
+                    }
+                }
+
+                // Update Follow Counts
+                document.getElementById("followerCount").innerText = user.followerIds ? user.followerIds.length : 0;
+                document.getElementById("followingCount").innerText = user.followingIds ? user.followingIds.length : 0;
+
+                
+                const bioEl = document.getElementById("profileBio");
+                if (bioEl) bioEl.innerText = user.bio || 'Student at CVR College of Engineering.';
+
+                if (typeof loadPosts === 'function') {
+                    loadPosts();
+                }
+            }).catch(e => {
+                console.error(e);
+            });
+
+        function updateFollowButtonUI(status) {
+            const btn = document.getElementById("followBtn");
+            if (!btn) return;
+            if (status === "Following") {
+                btn.innerText = "Following";
+                btn.style.background = "transparent";
+                btn.style.color = "var(--primary-blue)";
+                btn.style.border = "1px solid var(--primary-blue)";
+            } else if (status === "Requested") {
+                btn.innerText = "Requested";
+                btn.style.background = "var(--hover-bg)";
+                btn.style.color = "var(--text-light)";
+                btn.style.border = "1px solid var(--border-color)";
+            } else {
+                btn.innerText = "Follow";
+                btn.style.background = "var(--primary-blue)";
+                btn.style.color = "white";
+                btn.style.border = "none";
+            }
+        }
+
+        function toggleFollow() {
+            if (!targetUserId) return;
+            
+            const btn = document.getElementById("followBtn");
+            const currentStatus = btn ? btn.innerText : "Follow";
+            const userName = document.getElementById("profileName").innerText;
+            const userPfp = document.getElementById("profileAvatar").src;
+
+            if (currentStatus === "Following" || currentStatus === "Requested") {
+                document.getElementById("unfollowAvatar").src = userPfp;
+                document.getElementById("unfollowText").innerHTML = currentStatus === "Following" 
+                    ? `Are you sure you want to unfollow <strong>${userName}</strong>?` 
+                    : `Cancel follow request to <strong>${userName}</strong>?`;
+                
+                const unfollowBtn = document.querySelector("#unfollowModal .btn-primary");
+                unfollowBtn.innerText = currentStatus === "Following" ? "Unfollow" : "Cancel Request";
+                
+                document.getElementById("unfollowModal").classList.add("show");
                 return;
             }
 
-            document.getElementById("name").innerText = user.username;
-            document.getElementById("email").innerText = user.email;
-            document.getElementById("department").innerText = user.department;
-        });
-</script>
+            executeFollowAction();
+        }
 
+        function closeUnfollowModal() {
+            document.getElementById("unfollowModal").classList.remove("show");
+        }
+
+        function confirmUnfollowAction() {
+            closeUnfollowModal();
+            executeFollowAction();
+        }
+
+        function executeFollowAction() {
+            fetch(`/api/follow/${targetUserId}`, { method: 'POST' })
+                .then(res => {
+                    if (res.status === 401) {
+                        window.location.href = "/login";
+                        return;
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data) return;
+                    updateFollowButtonUI(data.status);
+                    document.getElementById("followerCount").innerText = data.followerCount;
+                })
+                .catch(err => showToast("Error updating follow status"));
+        }
+
+        // Photo upload functions
+        function uploadProfilePhoto(input) {
+            if (!input.files || !input.files[0]) return;
+            const formData = new FormData();
+            formData.append('file', input.files[0]);
+
+            fetch('/profile/upload-photo', { method: 'POST', body: formData })
+                .then(res => {
+                    if (!res.ok) throw new Error("Upload failed");
+                    return res.text();
+                })
+                .then(url => {
+                    document.getElementById("profileAvatar").src = url;
+                    const navAvatar = document.getElementById("navAvatar");
+                    if (navAvatar) navAvatar.src = url;
+                    showToast("Profile photo updated!");
+                }).catch(() => showToast("Upload failed"));
+        }
+
+        function uploadBackground(input) {
+            if (!input.files || !input.files[0]) return;
+            const formData = new FormData();
+            formData.append('file', input.files[0]);
+
+            fetch('/profile/upload-background', { method: 'POST', body: formData })
+                .then(res => {
+                    if (!res.ok) throw new Error("Upload failed");
+                    return res.text();
+                })
+                .then(url => {
+                    document.getElementById("profileBg").style.background = `url('${url}') center/cover no-repeat`;
+                    showToast("Background photo updated!");
+                }).catch(() => showToast("Upload failed"));
+        }
+    </script>
 </body>
 </html>
+

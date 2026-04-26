@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class    CVRgram {
+public class CVRgram {
 
     public static void main(String[] args) {
         SpringApplication.run(CVRgram.class, args);

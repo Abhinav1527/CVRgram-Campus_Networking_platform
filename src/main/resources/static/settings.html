@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | CVRgram</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/home" class="logo">CVRgram</a>
+        </div>
+        <div class="nav-center">
+            <a href="/home" class="nav-item">
+                <i data-lucide="home"></i>
+                <span>Home</span>
+            </a>
+            <a href="/search" class="nav-item">
+                <i data-lucide="compass"></i>
+                <span>Explore</span>
+            </a>
+            <a href="/chat" class="nav-item">
+                <i data-lucide="message-circle"></i>
+                <span>Messaging</span>
+            </a>
+            <a href="/notifications" class="nav-item">
+                <i data-lucide="bell"></i>
+                <span>Notifications</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="/profile">
+                <img src="https://ui-avatars.com/api/?name=User&background=random" class="nav-avatar" id="navAvatar" alt="Profile">
+            </a>
+            <a href="/" style="color: var(--text-light);" title="Logout">
+                <i data-lucide="log-out"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="app-container">
+        
+        <!-- Left Sidebar -->
+        <aside class="left-sidebar">
+            <div class="card left-nav">
+                <a href="/home"><i data-lucide="layout-grid" style="width: 18px; height: 18px;"></i> Feed</a>
+                <a href="/search"><i data-lucide="compass" style="width: 18px; height: 18px;"></i> Explore</a>
+                <a href="/groups"><i data-lucide="users" style="width: 18px; height: 18px;"></i> Groups</a>
+                <a href="/settings" class="active"><i data-lucide="settings" style="width: 18px; height: 18px;"></i> Settings</a>
+            </div>
+        </aside>
+
+        <!-- Settings Container -->
+        <main class="settings-container">
+            <div class="settings-nav card">
+                <a class="settings-nav-item active" onclick="switchSettingsTab('account', this)">
+                    <i data-lucide="user" style="width: 18px; height: 18px;"></i> Account
+                </a>
+                <a class="settings-nav-item" onclick="switchSettingsTab('profile', this)">
+                    <i data-lucide="file-text" style="width: 18px; height: 18px;"></i> Profile Info
+                </a>
+                <a class="settings-nav-item" onclick="switchSettingsTab('preferences', this)">
+                    <i data-lucide="sliders" style="width: 18px; height: 18px;"></i> Preferences
+                </a>
+                <a class="settings-nav-item" onclick="switchSettingsTab('privacy', this)">
+                    <i data-lucide="shield" style="width: 18px; height: 18px;"></i> Privacy
+                </a>
+            </div>
+
+            <div class="settings-content">
+                <!-- Account Section -->
+                <div id="settings-account" class="settings-section active">
+                    <div class="settings-card">
+                        <h3>Account Settings</h3>
+                        <div class="settings-form-group">
+                            <label>Email Address</label>
+                            <input type="email" value="student@cvr.ac.in" disabled style="background: #f3f2ef; color: var(--text-light); cursor: not-allowed;">
+                        </div>
+                        <div class="settings-form-group">
+                            <label>Current Password</label>
+                            <input type="password" placeholder="Enter current password">
+                        </div>
+                        <div class="settings-form-group">
+                            <label>New Password</label>
+                            <input type="password" placeholder="Enter new password">
+                        </div>
+                        <div class="settings-form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" placeholder="Confirm new password">
+                        </div>
+                        <button class="btn-primary">Update Password</button>
+                    </div>
+
+                    <div class="settings-card" style="margin-top: 24px; border-color: #fce8e6;">
+                        <h3 style="color: #d93025; border-color: #fce8e6;">Danger Zone</h3>
+                        <p style="font-size: 14px; color: var(--text-light); margin-bottom: 16px;">Once you delete your account, there is no going back. Please be certain.</p>
+                        <button class="btn-danger">Delete Account</button>
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="settings-profile" class="settings-section">
+                    <div class="settings-card">
+                        <h3>Profile Information</h3>
+                        <div class="settings-form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="settingsName" placeholder="Your Full Name">
+                        </div>
+                        <div class="settings-form-group">
+                            <label>Department</label>
+                            <select id="settingsDept">
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electronics & Communication">Electronics & Communication</option>
+                                <option value="Electrical & Electronics">Electrical & Electronics</option>
+                                <option value="Mechanical">Mechanical</option>
+                                <option value="Civil">Civil</option>
+                            </select>
+                        </div>
+                        <div class="settings-form-group">
+                            <label>Headline</label>
+                            <input type="text" placeholder="E.g. Aspiring Software Developer">
+                        </div>
+                        <div class="settings-form-group">
+                            <label>Bio</label>
+                            <textarea rows="4" placeholder="Tell us about yourself..."></textarea>
+                        </div>
+                        <button class="btn-primary" onclick="saveProfileInfo()">Save Profile</button>
+                    </div>
+                </div>
+
+                <!-- Preferences Section -->
+                <div id="settings-preferences" class="settings-section">
+                    <div class="settings-card">
+                        <h3>Preferences</h3>
+                        
+                        <div class="settings-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-title">Dark Mode</div>
+                                <div class="toggle-desc">Switch to a dark theme for lower eye strain</div>
+                            </div>
+                            <div class="toggle-switch" id="darkModeToggle" onclick="toggleDarkMode()"></div>
+                        </div>
+
+                        <div class="settings-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-title">Email Notifications</div>
+                                <div class="toggle-desc">Receive emails when someone interacts with your posts</div>
+                            </div>
+                            <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                        </div>
+
+                        <div class="settings-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-title">Weekly Digest</div>
+                                <div class="toggle-desc">Receive a weekly summary of top campus news</div>
+                            </div>
+                            <div class="toggle-switch" onclick="this.classList.toggle('on')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacy Section -->
+                <div id="settings-privacy" class="settings-section">
+                    <div class="settings-card">
+                        <h3>Privacy Controls</h3>
+                        
+                        <div class="settings-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-title">Profile Visibility</div>
+                                <div class="toggle-desc">Allow recruiters to see your public profile</div>
+                            </div>
+                            <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                        </div>
+
+                        <div class="settings-toggle">
+                            <div class="toggle-info">
+                                <div class="toggle-title">Show Active Status</div>
+                                <div class="toggle-desc">Let others see when you are online in chat</div>
+                            </div>
+                            <div class="toggle-switch on" onclick="this.classList.toggle('on')"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function switchSettingsTab(tabId, element) {
+            // Update nav items
+            document.querySelectorAll('.settings-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+
+            // Update sections
+            document.querySelectorAll('.settings-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById('settings-' + tabId).classList.add('active');
+        }
+
+        function saveProfileInfo() {
+            // Mock save function
+            const btn = document.querySelector('#settings-profile .btn-primary');
+            const originalText = btn.innerText;
+            btn.innerText = 'Saving...';
+            btn.style.opacity = '0.7';
+            
+            setTimeout(() => {
+                btn.innerText = 'Saved!';
+                btn.style.background = '#0f9d58'; // Success green
+                
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.background = '';
+                    btn.style.opacity = '1';
+                }, 2000);
+            }, 800);
+        }
+
+        // Prefill with global data if available
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch("/profile/data")
+                .then(res => res.json())
+                .then(user => {
+                    if (user && user.username) {
+                        document.getElementById('settingsName').value = user.username;
+                        if(user.department) {
+                            document.getElementById('settingsDept').value = user.department;
+                        }
+                    }
+                })
+                .catch(err => console.log(err));
+        });
+    </script>
+    <script src="/script.js"></script>
+</body>
+</html>
+
+

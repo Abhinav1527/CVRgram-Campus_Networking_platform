@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groups | CVRgram</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/home" class="logo">CVRgram</a>
+        </div>
+        <div class="nav-center">
+            <a href="/home" class="nav-item">
+                <i data-lucide="home"></i>
+                <span>Home</span>
+            </a>
+            <a href="/search" class="nav-item">
+                <i data-lucide="compass"></i>
+                <span>Explore</span>
+            </a>
+            <a href="/chat" class="nav-item">
+                <i data-lucide="message-circle"></i>
+                <span>Messaging</span>
+            </a>
+            <a href="/notifications" class="nav-item">
+                <i data-lucide="bell"></i>
+                <span>Notifications</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="/profile">
+                <img src="https://ui-avatars.com/api/?name=User&background=random" class="nav-avatar" id="navAvatar" alt="Profile">
+            </a>
+            <a href="/" style="color: var(--text-light);" title="Logout">
+                <i data-lucide="log-out"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="app-container">
+        
+        <!-- Left Sidebar -->
+        <aside class="left-sidebar">
+            <div class="card left-nav">
+                <a href="/home"><i data-lucide="layout-grid" style="width: 18px; height: 18px;"></i> Feed</a>
+                <a href="/search"><i data-lucide="compass" style="width: 18px; height: 18px;"></i> Explore</a>
+                <a href="/groups" class="active"><i data-lucide="users" style="width: 18px; height: 18px;"></i> Groups</a>
+                <a href="/settings"><i data-lucide="settings" style="width: 18px; height: 18px;"></i> Settings</a>
+            </div>
+        </aside>
+
+        <!-- Center Feed -->
+        <main>
+            <div class="card" style="padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 18px; font-weight: 600;">Groups</h2>
+                <button class="btn-primary" style="padding: 6px 16px; background: white; color: var(--primary-blue); border: 1px solid var(--primary-blue);">Create Group</button>
+            </div>
+
+            <div class="card" style="padding: 0;">
+                <div style="padding: 16px; border-bottom: 1px solid var(--border-color);">
+                    <h3 style="font-size: 16px; font-weight: 600;">Your Groups</h3>
+                </div>
+
+                <!-- Group Item -->
+                <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 16px; align-items: center; cursor: pointer;">
+                    <div style="width: 64px; height: 64px; border-radius: 8px; background: #a0b4b7; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" style="width: 100%; height: 100%; object-fit: cover;" alt="Group">
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--primary-blue);">Web Developers of CVR</p>
+                        <p style="font-size: 12px; color: var(--text-light);">1,204 members • 5 posts today</p>
+                    </div>
+                </div>
+
+                <!-- Group Item -->
+                <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 16px; align-items: center; cursor: pointer;">
+                    <div style="width: 64px; height: 64px; border-radius: 8px; background: #e16745; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" style="width: 100%; height: 100%; object-fit: cover;" alt="Group">
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--primary-blue);">UI/UX Design Club</p>
+                        <p style="font-size: 12px; color: var(--text-light);">856 members • 2 posts today</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 0;">
+                <div style="padding: 16px; border-bottom: 1px solid var(--border-color);">
+                    <h3 style="font-size: 16px; font-weight: 600;">Discover</h3>
+                </div>
+
+                <!-- Discover Group Item -->
+                <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 16px; align-items: center;">
+                    <div style="width: 64px; height: 64px; border-radius: 8px; background: #378fe9; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" style="width: 100%; height: 100%; object-fit: cover;" alt="Group">
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">Competitive Programming Network</p>
+                        <p style="font-size: 12px; color: var(--text-light);">3,402 members • Very Active</p>
+                    </div>
+                    <button class="btn-outline" style="margin-top: 0;">Join</button>
+                </div>
+
+                <!-- Discover Group Item -->
+                <div style="padding: 16px; display: flex; gap: 16px; align-items: center;">
+                    <div style="width: 64px; height: 64px; border-radius: 8px; background: #c37d16; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" style="width: 100%; height: 100%; object-fit: cover;" alt="Group">
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">Startup Incubation Hub</p>
+                        <p style="font-size: 12px; color: var(--text-light);">520 members • Active</p>
+                    </div>
+                    <button class="btn-outline" style="margin-top: 0;">Join</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <div style="font-size: 12px; color: var(--text-light); text-align: center; padding: 0 16px;">
+                <p style="margin-bottom: 8px;">
+                    <a href="#" style="margin-right: 8px;">About</a>
+                    <a href="#" style="margin-right: 8px;">Accessibility</a>
+                    <a href="#">Help Center</a>
+                </p>
+                <p style="margin-bottom: 8px;">
+                    <a href="#" style="margin-right: 8px;">Privacy & Terms</a>
+                    <a href="#">Ad Choices</a>
+                </p>
+                <p style="margin-bottom: 8px;">
+                    <a href="#" style="margin-right: 8px;">Advertising</a>
+                    <a href="#">Business Services</a>
+                </p>
+                <p>CVRgram Corporation © 2024</p>
+            </div>
+        </aside>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="/script.js"></script>
+</body>
+</html>
+
+

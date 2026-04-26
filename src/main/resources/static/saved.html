@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search | CVRgram</title>
+    <title>Feed | CVRgram</title>
     <link rel="stylesheet" href="/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -15,11 +15,11 @@
             <a href="/home" class="logo">CVRgram</a>
         </div>
         <div class="nav-center">
-            <a href="/home" class="nav-item">
+            <a href="/home" class="nav-item active">
                 <i data-lucide="home"></i>
                 <span>Home</span>
             </a>
-            <a href="/search" class="nav-item active">
+            <a href="/search" class="nav-item">
                 <i data-lucide="compass"></i>
                 <span>Explore</span>
             </a>
@@ -47,29 +47,35 @@
         
         <!-- Left Sidebar -->
         <aside class="left-sidebar">
+            <div class="card profile-card">
+                <a href="/profile" style="text-decoration: none;">
+                    <img src="https://ui-avatars.com/api/?name=User&background=random" class="profile-avatar-large" id="sidebarAvatar" alt="Profile">
+                </a>
+                <a href="/profile" style="text-decoration: none; color: inherit;">
+                    <div class="profile-name" id="sidebarName">Student</div>
+                </a>
+                <div class="profile-headline" id="sidebarDept">Department</div>
+                
+
+                
+                <a href="/saved" class="saved-items active" style="text-decoration: none; font-weight: 600; color: var(--primary-blue);">
+                    <i data-lucide="bookmark" style="width: 14px; height: 14px; fill: var(--primary-blue);"></i> Saved items
+                </a>
+            </div>
+
             <div class="card left-nav">
-                <div class="widget-title" style="padding: 16px 16px 8px; margin-bottom: 0;">On this page</div>
-                <a href="#" class="filter-link active" onclick="setSearchFilter('All', this); return false;">All</a>
-                <a href="#" class="filter-link" onclick="setSearchFilter('People', this); return false;">People</a>
-                <a href="#" class="filter-link" onclick="setSearchFilter('Posts', this); return false;">Posts</a>
-                <a href="#" class="filter-link" onclick="setSearchFilter('Groups', this); return false;">Groups</a>
+                <a href="/home"><i data-lucide="layout-grid" style="width: 18px; height: 18px;"></i> Feed</a>
+                <a href="/search"><i data-lucide="compass" style="width: 18px; height: 18px;"></i> Explore</a>
+                <a href="/groups"><i data-lucide="users" style="width: 18px; height: 18px;"></i> Groups</a>
+                <a href="/settings"><i data-lucide="settings" style="width: 18px; height: 18px;"></i> Settings</a>
             </div>
         </aside>
 
-        <!-- Center Content -->
-        <main>
-            <div class="card" style="padding: 16px;">
-                <div class="create-post-top" style="margin-bottom: 0;">
-                    <input type="text" id="searchInput" class="create-post-input" placeholder="Search for people, posts, or groups..." style="border-radius: 4px;">
-                    <button class="btn-primary" onclick="performSearch()">Search</button>
-                </div>
-            </div>
-
-            <div class="card" style="padding: 16px;">
-                <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Search Results</h2>
-                <div id="searchResults" style="font-size: 14px; color: var(--text-light);">
-                    Type a query above to see results.
-                </div>
+        <!-- Center Feed -->
+        <main class="feed">
+            <h2 style="margin-bottom: 16px; font-size: 20px; font-weight: 600;">Saved Posts</h2>
+            <div id="feed">
+                <!-- Posts will be loaded here -->
             </div>
         </main>
 
@@ -96,6 +102,32 @@
                 </a>
             </div>
 
+            <div class="card widget">
+                <div class="widget-title">Add to your feed</div>
+                
+                <div class="suggestion-item">
+                    <img src="https://ui-avatars.com/api/?name=Elena+Rodriguez&background=random" class="nav-avatar" style="width: 48px; height: 48px;" alt="Profile">
+                    <div>
+                        <div style="font-weight: 600; font-size: 14px;">Elena Rodriguez</div>
+                        <div style="font-size: 12px; color: var(--text-light);">Creative Director | Building design systems for scale</div>
+                        <button class="btn-outline"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> Follow</button>
+                    </div>
+                </div>
+
+                <div class="suggestion-item">
+                    <img src="https://ui-avatars.com/api/?name=Marcus+Chen&background=random" class="nav-avatar" style="width: 48px; height: 48px;" alt="Profile">
+                    <div>
+                        <div style="font-weight: 600; font-size: 14px;">Marcus Chen</div>
+                        <div style="font-size: 12px; color: var(--text-light);">Frontend Dev | React & Tailwind enthusiast</div>
+                        <button class="btn-outline"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> Follow</button>
+                    </div>
+                </div>
+
+                <a href="#" style="font-size: 14px; font-weight: 600; color: var(--text-light); display: flex; align-items: center; gap: 4px; margin-top: 12px;">
+                    View all recommendations <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+                </a>
+            </div>
+
             <div style="font-size: 12px; color: var(--text-light); text-align: center; padding: 0 16px;">
                 <p style="margin-bottom: 8px;">
                     <a href="#" style="margin-right: 8px;">About</a>
@@ -119,9 +151,10 @@
     <script>
         lucide.createIcons();
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script src="/script.js"></script>
+    <script>
+        loadPosts();
+    </script>
 </body>
 </html>
 

@@ -1,22 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Verify OTP</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP - CVRgram</title>
     <link rel="stylesheet" href="/style.css">
 </head>
-<body>
 
-<div style="display:flex;justify-content:center;align-items:center;height:100vh;">
-    <div class="card" style="width:350px;">
-        <h2>Verify Email</h2>
+<body class="auth-page">
 
-        <input type="text" id="otp" placeholder="Enter OTP">
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/" class="logo">CVRgram</a>
+        </div>
+    </nav>
 
-        <button onclick="verifyOtp()">Verify</button>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1 class="auth-title">Verify Email</h1>
+            <p class="auth-subtitle">We've sent a code to your email.</p>
+
+            <div class="input-group">
+                <input type="text" id="otp" placeholder="Enter OTP Code">
+            </div>
+            <button class="btn-auth" onclick="verifyOtp()">Submit</button>
+        </div>
     </div>
-</div>
 
-<script src="/script.js"></script>
-
+    <script src="/script.js"></script>
 </body>
+
 </html>
+

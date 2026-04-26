@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | CVRgram</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/home" class="logo">CVRgram</a>
+        </div>
+        <div class="nav-center">
+            <a href="/home" class="nav-item">
+                <i data-lucide="home"></i>
+                <span>Home</span>
+            </a>
+            <a href="/search" class="nav-item">
+                <i data-lucide="compass"></i>
+                <span>Explore</span>
+            </a>
+            <a href="/chat" class="nav-item">
+                <i data-lucide="message-circle"></i>
+                <span>Messaging</span>
+            </a>
+            <a href="/notifications" class="nav-item active">
+                <i data-lucide="bell"></i>
+                <span>Notifications</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="/profile">
+                <img src="https://ui-avatars.com/api/?name=User&background=random" class="nav-avatar" id="navAvatar" alt="Profile">
+            </a>
+            <a href="/" style="color: var(--text-light);" title="Logout">
+                <i data-lucide="log-out"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="app-container">
+        
+        <!-- Left Sidebar -->
+        <aside class="left-sidebar">
+            <div class="card left-nav">
+                <div class="widget-title" style="padding: 16px 16px 8px; margin-bottom: 0;">Manage your Notifications</div>
+                <a href="/settings" style="color: var(--primary-blue); font-weight: 600;">View Settings</a>
+            </div>
+        </aside>
+
+        <!-- Center Feed -->
+        <main>
+            <div class="card" style="padding: 16px; display: flex; gap: 8px;">
+                <button class="btn-primary" style="background: var(--text-dark); color: white;">All</button>
+                <button class="btn-outline" style="margin-top: 0; padding: 6px 16px;">My posts</button>
+                <button class="btn-outline" style="margin-top: 0; padding: 6px 16px;">Mentions</button>
+            </div>
+
+            <div id="followRequests" class="card" style="display: none; margin-bottom: 24px;">
+                <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); font-weight: 600; color: var(--primary-blue);">Follow Requests</div>
+                <div id="pendingList"></div>
+            </div>
+
+            <div class="card">
+                <!-- Existing notifications list... -->
+                <!-- Notification Item -->
+                <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 16px; cursor: pointer;">
+                    <img src="https://ui-avatars.com/api/?name=Sarah+Jenkins&background=random" style="width: 48px; height: 48px; border-radius: 50%;" alt="Profile">
+                    <div style="flex: 1;">
+                        <p style="font-size: 14px; margin-bottom: 4px;"><strong>Sarah Jenkins</strong> liked your post: "Just wrapped up the dark mode exploration..."</p>
+                        <p style="font-size: 12px; color: var(--text-light);">2 hours ago</p>
+                    </div>
+                    <i data-lucide="more-horizontal" style="width: 20px; height: 20px; color: var(--text-light);"></i>
+                </div>
+
+                <!-- Notification Item -->
+                <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 16px; cursor: pointer; background: #eef3f8;">
+                    <img src="https://ui-avatars.com/api/?name=Marcus+Chen&background=random" style="width: 48px; height: 48px; border-radius: 50%;" alt="Profile">
+                    <div style="flex: 1;">
+                        <p style="font-size: 14px; margin-bottom: 4px;"><strong>Marcus Chen</strong> commented on your post: "Looks great! What font did you use for the headers?"</p>
+                        <p style="font-size: 12px; color: var(--text-light);">5 hours ago</p>
+                    </div>
+                    <i data-lucide="more-horizontal" style="width: 20px; height: 20px; color: var(--text-light);"></i>
+                </div>
+
+                <!-- Notification Item -->
+                <div style="padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 16px; cursor: pointer;">
+                    <div style="width: 48px; height: 48px; border-radius: 50%; background: #a0b4b7; display: flex; align-items: center; justify-content: center;">
+                        <i data-lucide="users" style="width: 24px; height: 24px; color: white;"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="font-size: 14px; margin-bottom: 4px;"><strong>Elena Rodriguez</strong> and 5 others viewed your profile.</p>
+                        <p style="font-size: 12px; color: var(--text-light);">1 day ago</p>
+                    </div>
+                    <i data-lucide="more-horizontal" style="width: 20px; height: 20px; color: var(--text-light);"></i>
+                </div>
+
+                <!-- Notification Item -->
+                <div style="padding: 16px; display: flex; gap: 16px; cursor: pointer;">
+                    <div style="width: 48px; height: 48px; border-radius: 50%; background: #378fe9; display: flex; align-items: center; justify-content: center;">
+                        <i data-lucide="briefcase" style="width: 24px; height: 24px; color: white;"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="font-size: 14px; margin-bottom: 4px;">Trending: <strong>10 new jobs</strong> matching your preferences in Hyderabad.</p>
+                        <p style="font-size: 12px; color: var(--text-light);">2 days ago</p>
+                    </div>
+                    <i data-lucide="more-horizontal" style="width: 20px; height: 20px; color: var(--text-light);"></i>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <div style="font-size: 12px; color: var(--text-light); text-align: center; padding: 0 16px;">
+                <p style="margin-bottom: 8px;">
+                    <a href="#" style="margin-right: 8px;">About</a>
+                    <a href="#" style="margin-right: 8px;">Accessibility</a>
+                    <a href="#">Help Center</a>
+                </p>
+                <p style="margin-bottom: 8px;">
+                    <a href="#" style="margin-right: 8px;">Privacy & Terms</a>
+                    <a href="#">Ad Choices</a>
+                </p>
+                <p style="margin-bottom: 8px;">
+                    <a href="#" style="margin-right: 8px;">Advertising</a>
+                    <a href="#">Business Services</a>
+                </p>
+                <p>CVRgram Corporation © 2024</p>
+            </div>
+        </aside>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        async function loadFollowRequests() {
+            try {
+                const res = await fetch('/api/follow/pending');
+                if (!res.ok) return;
+                const users = await res.json();
+                
+                const container = document.getElementById('followRequests');
+                const list = document.getElementById('pendingList');
+                
+                if (users.length > 0) {
+                    container.style.display = 'block';
+                    list.innerHTML = users.map(user => {
+                        const avatarUrl = user.profilePhotoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random`;
+                        return `
+                            <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
+                                <img src="${avatarUrl}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                <div style="flex: 1;">
+                                    <p style="font-size: 14px; margin: 0;"><strong>${user.username}</strong> wants to follow you</p>
+                                    <p style="font-size: 12px; color: var(--text-light); margin: 0;">${user.department || 'Student'}</p>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="respondRequest(${user.id}, 'accept')" class="btn-primary" style="padding: 6px 12px; font-size: 12px;">Accept</button>
+                                    <button onclick="respondRequest(${user.id}, 'decline')" class="btn-outline" style="padding: 6px 12px; font-size: 12px; margin: 0;">Decline</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.style.display = 'none';
+                }
+            } catch (err) {
+                console.error("Error loading requests:", err);
+            }
+        }
+
+        async function respondRequest(userId, action) {
+            try {
+                const res = await fetch(`/api/follow/${action}/${userId}`, { method: 'POST' });
+                if (res.ok) {
+                    loadFollowRequests();
+                }
+            } catch (err) {
+                console.error("Error responding to request:", err);
+            }
+        }
+
+        loadFollowRequests();
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/script.js"></script>
+</body>
+</html>
+
+

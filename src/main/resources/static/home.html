@@ -1,72 +1,190 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Home - CVRgram</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed | CVRgram</title>
     <link rel="stylesheet" href="/style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-<div class="app">
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="logo">CVRgram</div>
-
-        <a href="/home">
-            <i data-lucide="home"></i>
-            <span>Home</span>
-        </a>
-
-        <a href="/search">
-            <i data-lucide="search"></i>
-            <span>Search</span>
-        </a>
-
-        <a href="/profile">
-            <i data-lucide="user"></i>
-            <span>Profile</span>
-        </a>
-
-        <a href="/chat">
-            <i data-lucide="message-circle"></i>
-            <span>Messages</span>
-        </a>
-
-        <a href="/">
-            <i data-lucide="log-out"></i>
-            <span>Logout</span>
-        </a>
-    </div>
-
-    <!-- Main Feed -->
-    <div class="main">
-
-        <!-- Create Post Card -->
-        <div class="post-card">
-            <div class="post-header">
-                Create Post
-            </div>
-
-            <div class="post-content">
-                <textarea id="postContent" placeholder="Share something with your college..."></textarea>
-                <button onclick="createPost()">Post</button>
-            </div>
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/home" class="logo">CVRgram</a>
         </div>
+        <div class="nav-center">
+            <a href="/home" class="nav-item active">
+                <i data-lucide="home"></i>
+                <span>Home</span>
+            </a>
+            <a href="/search" class="nav-item">
+                <i data-lucide="compass"></i>
+                <span>Explore</span>
+            </a>
+            <a href="/chat" class="nav-item">
+                <i data-lucide="message-circle"></i>
+                <span>Messaging</span>
+            </a>
+            <a href="/notifications" class="nav-item">
+                <i data-lucide="bell"></i>
+                <span>Notifications</span>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="/profile">
+                <img src="https://ui-avatars.com/api/?name=User&background=random" class="nav-avatar" id="navAvatar" alt="Profile">
+            </a>
+            <a href="/" style="color: var(--text-light);" title="Logout">
+                <i data-lucide="log-out"></i>
+            </a>
+        </div>
+    </nav>
 
-        <!-- Feed Container -->
-        <div id="feed"></div>
+    <!-- Main Content -->
+    <div class="app-container">
+        
+        <!-- Left Sidebar -->
+        <aside class="left-sidebar">
+            <div class="card profile-card">
+                <a href="/profile" style="text-decoration: none;">
+                    <img src="https://ui-avatars.com/api/?name=User&background=random" class="profile-avatar-large" id="sidebarAvatar" alt="Profile">
+                </a>
+                <a href="/profile" style="text-decoration: none; color: inherit;">
+                    <div class="profile-name" id="sidebarName">Student</div>
+                </a>
+                <div class="profile-headline" id="sidebarDept">Department</div>
+                
+
+                
+                <a href="/saved" class="saved-items" style="text-decoration: none;">
+                    <i data-lucide="bookmark" style="width: 14px; height: 14px;"></i> Saved items
+                </a>
+            </div>
+
+            <div class="card left-nav">
+                <a href="/home" class="active"><i data-lucide="layout-grid" style="width: 18px; height: 18px;"></i> Feed</a>
+                <a href="/search"><i data-lucide="compass" style="width: 18px; height: 18px;"></i> Explore</a>
+                <a href="/groups"><i data-lucide="users" style="width: 18px; height: 18px;"></i> Groups</a>
+                <a href="/settings"><i data-lucide="settings" style="width: 18px; height: 18px;"></i> Settings</a>
+            </div>
+        </aside>
+
+        <!-- Center Feed -->
+        <main class="feed">
+            <div class="card create-post">
+                <div class="create-post-top" style="flex-direction: column; align-items: stretch; gap: 0;">
+                    <div style="display: flex; gap: 8px; align-items: center; position: relative;">
+                        <a href="/profile">
+                            <img src="https://ui-avatars.com/api/?name=User&background=random" class="nav-avatar" id="createPostAvatar" alt="Profile">
+                        </a>
+                        <input type="text" id="postContent" class="create-post-input" placeholder="Start a post, share a project..." style="padding-right: 48px;">
+                        <input type="file" id="mediaUpload" accept="image/*" style="display: none;" onchange="previewMedia(event)">
+                        <label for="mediaUpload" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--primary-blue); cursor: pointer; display: flex; align-items: center; margin: 0;">
+                            <i data-lucide="paperclip" title="Add Media" style="width: 20px; height: 20px;"></i>
+                        </label>
+                    </div>
+                    <div id="imagePreviewContainer" style="display: none; margin-top: 12px; margin-left: 56px; position: relative; max-width: 200px;">
+                        <img id="imagePreview" src="" style="width: 100%; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div onclick="removeMedia()" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.5); color: white; border-radius: 50%; cursor: pointer; display: flex; padding: 4px;">
+                            <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="create-post-actions" style="justify-content: flex-end;">
+                    <button class="btn-primary" onclick="createPost()">Post</button>
+                </div>
+            </div>
+
+            <div class="feed-sort">
+                <hr>
+                <span>Sort by: Top <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i></span>
+            </div>
+
+            <div id="feed">
+                <!-- Posts will be loaded here -->
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <div class="card widget">
+                <div class="widget-title">Trending in Design <i data-lucide="info" style="width: 14px; height: 14px; float: right; color: var(--text-light);"></i></div>
+                <ul class="trending-list">
+                    <li class="trending-item">
+                        <div class="trending-item-title">1. Figma Auto Layout 5.0</div>
+                        <div class="trending-item-meta">10.5k posts</div>
+                    </li>
+                    <li class="trending-item">
+                        <div class="trending-item-title">2. AI Generated Assets</div>
+                        <div class="trending-item-meta">8,241 posts</div>
+                    </li>
+                    <li class="trending-item">
+                        <div class="trending-item-title">3. Minimalist Portfolios</div>
+                        <div class="trending-item-meta">5,102 posts</div>
+                    </li>
+                </ul>
+                <a href="#" style="font-size: 14px; font-weight: 600; color: var(--text-light); display: flex; align-items: center; gap: 4px; margin-top: 12px;">
+                    Show more <i data-lucide="chevron-down" style="width: 16px; height: 16px;"></i>
+                </a>
+            </div>
+
+            <div class="card widget">
+                <div class="widget-title">Add to your feed</div>
+                
+                <div class="suggestion-item">
+                    <img src="https://ui-avatars.com/api/?name=Elena+Rodriguez&background=random" class="nav-avatar" style="width: 48px; height: 48px;" alt="Profile">
+                    <div>
+                        <div style="font-weight: 600; font-size: 14px;">Elena Rodriguez</div>
+                        <div style="font-size: 12px; color: var(--text-light);">Creative Director | Building design systems for scale</div>
+                        <button class="btn-outline"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> Follow</button>
+                    </div>
+                </div>
+
+                <div class="suggestion-item">
+                    <img src="https://ui-avatars.com/api/?name=Marcus+Chen&background=random" class="nav-avatar" style="width: 48px; height: 48px;" alt="Profile">
+                    <div>
+                        <div style="font-weight: 600; font-size: 14px;">Marcus Chen</div>
+                        <div style="font-size: 12px; color: var(--text-light);">Frontend Dev | React & Tailwind enthusiast</div>
+                        <button class="btn-outline"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> Follow</button>
+                    </div>
+                </div>
+
+                <a href="#" style="font-size: 14px; font-weight: 600; color: var(--text-light); display: flex; align-items: center; gap: 4px; margin-top: 12px;">
+                    View all recommendations <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+                </a>
+            </div>
+
+            <div style="font-size: 12px; color: var(--text-light); text-align: center; padding: 0 16px;">
+                <p style="margin-bottom: 8px;">
+                    <a href="#" style="margin-right: 8px;">About</a>
+                    <a href="#" style="margin-right: 8px;">Accessibility</a>
+                    <a href="#">Help Center</a>
+                </p>
+                <p style="margin-bottom: 8px;">
+                    <a href="#" style="margin-right: 8px;">Privacy & Terms</a>
+                    <a href="#">Ad Choices</a>
+                </p>
+                <p style="margin-bottom: 8px;">
+                    <a href="#" style="margin-right: 8px;">Advertising</a>
+                    <a href="#">Business Services</a>
+                </p>
+                <p>CVRgram Corporation © 2024</p>
+            </div>
+        </aside>
 
     </div>
 
-</div>
-
-<script>
-    lucide.createIcons();
-    loadPosts();
-</script>
-
-<script src="/script.js"></script>
-
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/script.js"></script>
+    <script>
+        loadPosts();
+    </script>
 </body>
 </html>
+

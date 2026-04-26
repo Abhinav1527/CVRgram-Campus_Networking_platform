@@ -1,6 +1,7 @@
 package com.CVRgram.Controller;
 
 import com.CVRgram.Model.User;
+import com.CVRgram.Repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -8,35 +9,34 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.Optional;
 
 @Controller
 public class AuthController {
 
-    private Map<String, User> pendingUsers = new HashMap<>();
-    private Map<String, User> registeredUsers = new HashMap<>();
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private JavaMailSender mailSender;
 
     @GetMapping("/")
     public String rootRedirect() {
-        return "redirect:/auth/login";
+        return "redirect:/login";
     }
 
-    @GetMapping("/auth/login")
+    @GetMapping("/login")
     public String loginPage() {
         return "forward:/login.html";
     }
 
-    @GetMapping("/auth/register")
+    @GetMapping("/register")
     public String registerPage() {
         return "forward:/register.html";
     }
 
-    @GetMapping("/auth/verify")
+    @GetMapping("/verify")
     public String verifyPage() {
         return "forward:/verify.html";
     }
@@ -54,7 +54,21 @@ public class AuthController {
             return "Only @cvr.ac.in emails are allowed.";
         }
 
-        User user = new User();
+        if (password == null || !password.matches("^(?=.*[0-9])(?=.*[!@#$%^&*(),.?\":{}|<>])(?=.*[A-Z]).{6,15}$")) {
+            return "Password must be 6-15 characters, with at least 1 number, 1 uppercase, and 1 special char.";
+        }
+
+        Optional<User> existingUserByUsername = userRepository.findByUsername(username);
+        if (existingUserByUsername.isPresent() && existingUserByUsername.get().isVerified()) {
+            return "Username is already taken.";
+        }
+
+        Optional<User> existingUser = userRepository.findByEmail(email);
+        if (existingUser.isPresent() && existingUser.get().isVerified()) {
+            return "Email is already registered.";
+        }
+
+        User user = existingUser.orElse(new User());
         user.setUsername(username);
         user.setEmail(email);
         user.setDepartment(department);
@@ -62,10 +76,10 @@ public class AuthController {
         user.setVerified(false);
 
         // generate OTP
-        String otp = String.valueOf((int)(Math.random() * 900000) + 100000);
+        String otp = String.valueOf((int) (Math.random() * 900000) + 100000);
         user.setOtp(otp);
 
-        pendingUsers.put(email, user);
+        userRepository.save(user);
 
         sendOtpEmail(email, otp);
 
@@ -74,55 +88,68 @@ public class AuthController {
 
     private void sendOtpEmail(String toEmail, String otp) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(toEmail);
-        message.setSubject("CVRgram Email Verification");
-        message.setText("Your OTP is: " + otp);
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            try {
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(toEmail);
+                message.setSubject("CVRgram Email Verification");
+                message.setText("Your OTP is: " + otp);
 
-        mailSender.send(message);
+                mailSender.send(message);
+            } catch (Exception e) {
+                System.err.println("Failed to send OTP email asynchronously: " + e.getMessage());
+            }
+        });
     }
 
     @PostMapping("/auth/verify")
     @ResponseBody
     public String verifyOtp(@RequestBody Map<String, String> data,
-                            HttpSession session) {
+            HttpSession session) {
 
         String email = data.get("email");
         String enteredOtp = data.get("otp");
 
-        User user = pendingUsers.get(email);
+        Optional<User> userOptional = userRepository.findByEmail(email);
 
-        if (user == null) {
+        if (userOptional.isEmpty()) {
             return "User not found.";
         }
+
+        User user = userOptional.get();
 
         if (!user.getOtp().equals(enteredOtp)) {
             return "Invalid OTP.";
         }
 
         user.setVerified(true);
-
-        // Move to registered users
-        registeredUsers.put(email, user);
-        pendingUsers.remove(email);
+        user.setOtp(null); // Clear OTP after verification
+        userRepository.save(user);
 
         // Set session
         session.setAttribute("loggedInUser", user);
 
         return "Verification Successful";
     }
+
     @PostMapping("/auth/login")
     @ResponseBody
     public String loginUser(@RequestBody Map<String, String> data,
-                            HttpSession session) {
+            HttpSession session) {
 
-        String email = data.get("email");
+        String email = data.get("email"); // this can now be email or username
         String password = data.get("password");
 
-        User user = registeredUsers.get(email);
+        Optional<User> userOptional = userRepository.findByEmailOrUsername(email, email);
 
-        if (user == null) {
+        if (userOptional.isEmpty()) {
             return "User not registered.";
+        }
+
+        User user = userOptional.get();
+        
+        if (!user.isVerified()) {
+            return "Please verify your email first.";
         }
 
         if (!user.getPassword().equals(password)) {
