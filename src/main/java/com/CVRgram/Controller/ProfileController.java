@@ -32,7 +32,7 @@ public class ProfileController {
     // 🔹 GET LOGGED-IN USER
     @GetMapping("/data")
     @ResponseBody
-    public ResponseEntity<User> getProfile(HttpSession session) {
+    public ResponseEntity<?> getProfile(HttpSession session) {
         User sessionUser = (User) session.getAttribute("loggedInUser");
         if (sessionUser == null) return ResponseEntity.status(401).build();
         
@@ -41,7 +41,20 @@ public class ProfileController {
         if (dbUser == null) return ResponseEntity.status(404).build();
         
         dbUser.setPassword(null); // Safety check
-        return ResponseEntity.ok(dbUser);
+
+        Map<String, Object> response = new java.util.HashMap<>();
+        response.put("id", dbUser.getId());
+        response.put("username", dbUser.getUsername());
+        response.put("email", dbUser.getEmail());
+        response.put("department", dbUser.getDepartment());
+        response.put("headline", dbUser.getHeadline());
+        response.put("bio", dbUser.getBio());
+        response.put("profilePhotoUrl", dbUser.getProfilePhotoUrl());
+        response.put("backgroundPhotoUrl", dbUser.getBackgroundPhotoUrl());
+        response.put("followerCount", dbUser.getFollowerIds().size());
+        response.put("followingCount", dbUser.getFollowingIds().size());
+
+        return ResponseEntity.ok(response);
     }
 
     // 🔹 UPDATE PROFILE

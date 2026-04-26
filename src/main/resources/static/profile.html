@@ -76,7 +76,6 @@
                     </div>
                     
                     <div id="actionBtns" style="margin-top: 16px; display: flex; gap: 8px;">
-                        <button class="btn-primary">Open to</button>
                         <button class="btn-outline" style="margin-top: 0;">Add profile section</button>
                     </div>
                 </div>
@@ -95,15 +94,10 @@
         </main>
 
         <aside class="right-sidebar">
-             <div class="card widget">
-                <div class="widget-title">Profile language</div>
-                <div style="font-size: 14px; color: var(--text-light); display: flex; justify-content: space-between;">
-                    English <i data-lucide="edit-2" style="width: 16px; height: 16px;"></i>
-                </div>
-                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 16px 0;">
-                <div class="widget-title" style="margin-bottom: 8px;">Public profile & URL</div>
-                <div style="font-size: 14px; color: var(--text-light); display: flex; justify-content: space-between;">
-                    www.cvrgram.com/in/user <i data-lucide="edit-2" style="width: 16px; height: 16px;"></i>
+            <div class="card widget">
+                <div class="widget-title">Suggested for you</div>
+                <div id="followSuggestions" style="display: flex; flex-direction: column; gap: 14px; margin-top: 8px;">
+                    <p style="font-size: 13px; color: var(--text-light);">Loading...</p>
                 </div>
             </div>
         </aside>
@@ -243,8 +237,8 @@
                 }
 
                 // Update Follow Counts
-                document.getElementById("followerCount").innerText = user.followerIds ? user.followerIds.length : 0;
-                document.getElementById("followingCount").innerText = user.followingIds ? user.followingIds.length : 0;
+                document.getElementById("followerCount").innerText = user.followerCount || 0;
+                document.getElementById("followingCount").innerText = user.followingCount || 0;
 
                 
                 const bioEl = document.getElementById("profileBio");
@@ -256,6 +250,70 @@
             }).catch(e => {
                 console.error(e);
             });
+
+        // Load Follow Suggestions
+        fetch('/api/follow/suggestions')
+            .then(res => {
+                if (!res.ok) throw new Error('Failed');
+                return res.json();
+            })
+            .then(users => {
+                const container = document.getElementById('followSuggestions');
+                if (!users || users.length === 0) {
+                    container.innerHTML = '<p style="font-size: 13px; color: var(--text-light);">No suggestions right now.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                users.forEach(user => {
+                    const name = user.username || 'Student';
+                    const avatar = user.profilePhotoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
+                    const dept = user.department || user.headline || '';
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.innerHTML = `
+                        <a href="/profile?userId=${user.id}" style="text-decoration: none; display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                            <img src="${avatar}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" alt="${name}">
+                            <div style="min-width: 0; flex: 1;">
+                                <div style="font-weight: 600; font-size: 13px; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${name}</div>
+                                <div style="font-size: 11px; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${dept}</div>
+                            </div>
+                        </a>
+                        <button class="btn-outline" style="margin-top: 0; flex-shrink: 0; font-size: 12px; padding: 4px 12px;" onclick="followSuggestion(this, ${user.id})">
+                            <i data-lucide="plus" style="width: 12px; height: 12px;"></i> Follow
+                        </button>
+                    `;
+                    container.appendChild(item);
+                });
+                lucide.createIcons();
+            })
+            .catch(() => {
+                const container = document.getElementById('followSuggestions');
+                if (container) container.innerHTML = '<p style="font-size: 13px; color: var(--text-light);">Could not load suggestions.</p>';
+            });
+
+        function followSuggestion(btn, userId) {
+            fetch(`/api/follow/${userId}`, { method: 'POST' })
+                .then(res => {
+                    if (res.status === 401) { window.location.href = '/login'; return; }
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data) return;
+                    if (data.status === 'Requested') {
+                        btn.innerHTML = 'Requested';
+                        btn.style.background = 'var(--hover-bg)';
+                        btn.style.color = 'var(--text-light)';
+                        btn.style.border = '1px solid var(--border-color)';
+                        btn.disabled = true;
+                    } else if (data.status === 'Following') {
+                        btn.innerHTML = 'Following';
+                        btn.style.background = 'transparent';
+                        btn.style.color = 'var(--primary-blue)';
+                        btn.style.border = '1px solid var(--primary-blue)';
+                    }
+                })
+                .catch(() => {});
+        }
 
         function updateFollowButtonUI(status) {
             const btn = document.getElementById("followBtn");

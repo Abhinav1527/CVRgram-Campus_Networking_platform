@@ -8,8 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/follow")
@@ -17,6 +21,29 @@ public class FollowController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @GetMapping("/suggestions")
+    public ResponseEntity<?> getSuggestions(HttpSession session) {
+        User currentUser = (User) session.getAttribute("loggedInUser");
+        if (currentUser == null) return ResponseEntity.status(401).build();
+
+        User dbUser = userRepository.findById(currentUser.getId()).orElseThrow();
+
+        // Collect IDs to exclude: self + already following + pending
+        Set<Long> excludeIds = new HashSet<>();
+        excludeIds.add(dbUser.getId());
+        excludeIds.addAll(dbUser.getFollowingIds());
+        excludeIds.addAll(dbUser.getPendingFollowingIds());
+
+        List<User> allUsers = userRepository.findAll();
+        List<User> suggestions = allUsers.stream()
+                .filter(u -> !excludeIds.contains(u.getId()))
+                .limit(5)
+                .peek(u -> u.setPassword(null))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(suggestions);
+    }
 
     @PostMapping("/{targetUserId}")
     public ResponseEntity<?> toggleFollow(@PathVariable Long targetUserId, HttpSession session) {
