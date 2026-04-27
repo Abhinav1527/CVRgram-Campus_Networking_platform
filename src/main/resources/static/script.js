@@ -3,6 +3,17 @@ if (localStorage.getItem('darkMode') === 'enabled') {
     document.body.classList.add('dark-mode');
 }
 
+function withCacheBust(url) {
+    if (!url || !url.startsWith('/uploads/')) return url;
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}t=${Date.now()}`;
+}
+
+function openUserProfileById(userId) {
+    if (!userId) return;
+    window.location.href = `/profile?userId=${userId}`;
+}
+
 function showToast(message) {
     let toast = document.getElementById('cvr-toast');
     if (!toast) {
@@ -236,7 +247,9 @@ function loadPosts() {
             const authorName = post.author ? post.author.username : "Unknown";
             const authorHeadline = post.author && post.author.headline ? post.author.headline : "Student at CVR College";
             const avatarName = post.author ? post.author.username : "Student";
-            const avatarUrl = (post.author && post.author.profilePhotoUrl) ? post.author.profilePhotoUrl : `https://ui-avatars.com/api/?name=${encodeURIComponent(avatarName)}&background=random`;
+            const avatarUrl = (post.author && post.author.profilePhotoUrl)
+                ? withCacheBust(post.author.profilePhotoUrl)
+                : `https://ui-avatars.com/api/?name=${encodeURIComponent(avatarName)}&background=random`;
             
             let mediaHtml = "";
             if (post.imageUrl) {
@@ -259,12 +272,16 @@ function loadPosts() {
             if (post.comments && post.comments.length > 0) {
                 post.comments.forEach(c => {
                     let cAuthor = c.author ? c.author.username : "Unknown";
+                    let cAuthorId = c.author ? c.author.id : null;
+                    let cAvatarUrl = (c.author && c.author.profilePhotoUrl)
+                        ? withCacheBust(c.author.profilePhotoUrl)
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(cAuthor)}&background=random`;
                     commentsHtml += `
                         <div class="comment-item" style="position: relative;">
-                            <img src="https://ui-avatars.com/api/?name=${cAuthor}&background=random" class="nav-avatar" style="width: 32px; height: 32px;" alt="Profile">
+                            <img src="${cAvatarUrl}" class="nav-avatar" style="width: 32px; height: 32px; cursor: ${cAuthorId ? 'pointer' : 'default'};" alt="Profile" ${cAuthorId ? `onclick="openUserProfileById(${cAuthorId})"` : ''}>
                             <div class="comment-content">
                                 <span class="comment-author" style="display: flex; justify-content: space-between; align-items: center;">
-                                    ${cAuthor}
+                                    <span style="cursor: ${cAuthorId ? 'pointer' : 'default'};" ${cAuthorId ? `onclick="openUserProfileById(${cAuthorId})"` : ''}>${cAuthor}</span>
                                     <i data-lucide="trash-2" onclick="deleteComment(${post.id}, ${c.id})" style="width: 14px; height: 14px; color: var(--danger-color, #ef4444); cursor: pointer;"></i>
                                 </span>
                                 <span>${c.text}</span>
@@ -313,7 +330,7 @@ function loadPosts() {
                 <div class="post-caption" style="padding: 0 16px 12px; font-size: 14px;">
                     <span style="font-weight: 600; margin-right: 4px;">${authorName}</span>${post.content}
                 </div>
-                <div id="comments-section-${post.id}" class="comment-section" style="display: none;">
+                <div id="comments-section-${post.id}" class="comment-section" style="display: block;">
                     <div class="comments-list" id="comments-list-${post.id}">
                         ${commentsHtml}
                     </div>
@@ -555,7 +572,9 @@ if (window.location.pathname !== "/login" && window.location.pathname !== "/regi
         .then(user => {
             if (user && user.username) {
                 const nameStr = user.username;
-                const avatarUrl = user.profilePhotoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(nameStr)}&background=random`;
+                const avatarUrl = user.profilePhotoUrl
+                    ? withCacheBust(user.profilePhotoUrl)
+                    : `https://ui-avatars.com/api/?name=${encodeURIComponent(nameStr)}&background=random`;
                 
                 // Update nav avatar
                 const navAvatar = document.getElementById("navAvatar");
@@ -934,7 +953,9 @@ document.addEventListener('click', (e) => {
 function showNotificationPopup(msg) {
     const popup = document.createElement('div');
     popup.className = 'global-notification-toast';
-    const senderAvatar = msg.sender.profilePhotoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.username)}&background=random`;
+    const senderAvatar = msg.sender.profilePhotoUrl
+        ? withCacheBust(msg.sender.profilePhotoUrl)
+        : `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.sender.username)}&background=random`;
     
     popup.innerHTML = `
         <div style="display: flex; gap: 12px; align-items: center; position: relative;">

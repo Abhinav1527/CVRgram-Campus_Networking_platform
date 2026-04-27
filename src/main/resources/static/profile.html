@@ -173,20 +173,25 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script src="/script.js"></script>
+    <script src="/script.js?v=20260427b"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const targetUserId = urlParams.get('userId');
         const fetchUrl = targetUserId ? `/api/users/${targetUserId}` : "/profile/data";
+        const getFreshUrl = (url) => {
+            if (!url || !url.startsWith('/uploads/')) return url;
+            const separator = url.includes('?') ? '&' : '?';
+            return `${url}${separator}t=${Date.now()}`;
+        };
 
         fetch(fetchUrl)
             .then(res => {
                 if (!res.ok) {
-                    if (res.status === 401) {
+                    if (!targetUserId && (res.status === 401 || res.status === 403 || res.status === 404)) {
                         window.location.href = "/login";
                         return null;
                     }
-                    throw new Error("Failed to fetch user data");
+                    throw new Error(`Failed to fetch user data (${res.status})`);
                 }
                 return res.json();
             })
@@ -194,7 +199,9 @@
                 if (!user) return; // Already handled by redirect
                 
                 const nameStr = user.username || 'Student';
-                const avatarUrl = user.profilePhotoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(nameStr)}&background=random`;
+                const avatarUrl = user.profilePhotoUrl
+                    ? getFreshUrl(user.profilePhotoUrl)
+                    : `https://ui-avatars.com/api/?name=${encodeURIComponent(nameStr)}&background=random`;
                 
                 document.getElementById("profileName").innerText = nameStr;
                 document.getElementById("profileEmail").innerText = user.email || '';
@@ -203,7 +210,7 @@
 
                 // Background photo
                 if (user.backgroundPhotoUrl) {
-                    document.getElementById("profileBg").style.background = `url('${user.backgroundPhotoUrl}') center/cover no-repeat`;
+                    document.getElementById("profileBg").style.background = `url('${getFreshUrl(user.backgroundPhotoUrl)}') center/cover no-repeat`;
                 }
                 
                 if (!targetUserId) {
@@ -248,7 +255,10 @@
                     loadPosts();
                 }
             }).catch(e => {
-                console.error(e);
+                console.error("Profile load error:", e);
+                const profileName = document.getElementById("profileName");
+                if (profileName) profileName.innerText = "Unable to load profile";
+                showToast("Unable to load user details.");
             });
 
         // Load Follow Suggestions
@@ -266,7 +276,9 @@
                 container.innerHTML = '';
                 users.forEach(user => {
                     const name = user.username || 'Student';
-                    const avatar = user.profilePhotoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
+                    const avatar = user.profilePhotoUrl
+                        ? getFreshUrl(user.profilePhotoUrl)
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
                     const dept = user.department || user.headline || '';
                     const item = document.createElement('div');
                     item.className = 'suggestion-item';
@@ -398,9 +410,10 @@
                     return res.text();
                 })
                 .then(url => {
-                    document.getElementById("profileAvatar").src = url;
+                    const freshUrl = getFreshUrl(url);
+                    document.getElementById("profileAvatar").src = freshUrl;
                     const navAvatar = document.getElementById("navAvatar");
-                    if (navAvatar) navAvatar.src = url;
+                    if (navAvatar) navAvatar.src = freshUrl;
                     showToast("Profile photo updated!");
                 }).catch(() => showToast("Upload failed"));
         }
@@ -416,7 +429,7 @@
                     return res.text();
                 })
                 .then(url => {
-                    document.getElementById("profileBg").style.background = `url('${url}') center/cover no-repeat`;
+                    document.getElementById("profileBg").style.background = `url('${getFreshUrl(url)}') center/cover no-repeat`;
                     showToast("Background photo updated!");
                 }).catch(() => showToast("Upload failed"));
         }

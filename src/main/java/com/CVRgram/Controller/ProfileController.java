@@ -33,11 +33,11 @@ public class ProfileController {
     @GetMapping("/data")
     @ResponseBody
     public ResponseEntity<?> getProfile(HttpSession session) {
-        User sessionUser = (User) session.getAttribute("loggedInUser");
-        if (sessionUser == null) return ResponseEntity.status(401).build();
+        Long currentUserId = getSessionUserId(session);
+        if (currentUserId == null) return ResponseEntity.status(401).build();
         
         // Fetch fresh from DB to avoid session/serialization issues
-        User dbUser = userRepository.findById(sessionUser.getId()).orElse(null);
+        User dbUser = userRepository.findById(currentUserId).orElse(null);
         if (dbUser == null) return ResponseEntity.status(404).build();
         
         dbUser.setPassword(null); // Safety check
@@ -63,14 +63,14 @@ public class ProfileController {
     public String updateProfile(@RequestBody Map<String, String> data,
                                 HttpSession session) {
 
-        User sessionUser = (User) session.getAttribute("loggedInUser");
+        Long currentUserId = getSessionUserId(session);
 
-        if (sessionUser == null) {
+        if (currentUserId == null) {
             return "Not logged in.";
         }
 
         // Fetch fresh entity from DB to ensure it's managed and we don't lose data
-        User dbUser = userRepository.findById(sessionUser.getId()).orElse(null);
+        User dbUser = userRepository.findById(currentUserId).orElse(null);
         if (dbUser == null) {
             return "User not found in database.";
         }
@@ -95,10 +95,10 @@ public class ProfileController {
     @ResponseBody
     public ResponseEntity<String> uploadProfilePhoto(@RequestParam("file") MultipartFile file,
                                                       HttpSession session) {
-        User sessionUser = (User) session.getAttribute("loggedInUser");
-        if (sessionUser == null) return ResponseEntity.status(401).body("Not logged in");
+        Long currentUserId = getSessionUserId(session);
+        if (currentUserId == null) return ResponseEntity.status(401).body("Not logged in");
 
-        User dbUser = userRepository.findById(sessionUser.getId()).orElse(null);
+        User dbUser = userRepository.findById(currentUserId).orElse(null);
         if (dbUser == null) return ResponseEntity.status(404).body("User not found");
 
         String url = saveFile(file);
@@ -116,10 +116,10 @@ public class ProfileController {
     @ResponseBody
     public ResponseEntity<String> uploadBackgroundPhoto(@RequestParam("file") MultipartFile file,
                                                          HttpSession session) {
-        User sessionUser = (User) session.getAttribute("loggedInUser");
-        if (sessionUser == null) return ResponseEntity.status(401).body("Not logged in");
+        Long currentUserId = getSessionUserId(session);
+        if (currentUserId == null) return ResponseEntity.status(401).body("Not logged in");
 
-        User dbUser = userRepository.findById(sessionUser.getId()).orElse(null);
+        User dbUser = userRepository.findById(currentUserId).orElse(null);
         if (dbUser == null) return ResponseEntity.status(404).body("User not found");
 
         String url = saveFile(file);
@@ -155,5 +155,32 @@ public class ProfileController {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private Long getSessionUserId(HttpSession session) {
+        Object sessionUser = session.getAttribute("loggedInUser");
+        if (sessionUser == null) {
+            return null;
+        }
+
+        if (sessionUser instanceof User user) {
+            return user.getId();
+        }
+
+        if (sessionUser instanceof Map<?, ?> map) {
+            Object id = map.get("id");
+            if (id instanceof Number number) {
+                return number.longValue();
+            }
+            if (id instanceof String idStr) {
+                try {
+                    return Long.parseLong(idStr);
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        }
+
+        session.invalidate();
+        return null;
     }
 }

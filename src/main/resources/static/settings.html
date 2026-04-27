@@ -79,11 +79,11 @@
                         <h3>Account Settings</h3>
                         <div class="settings-form-group">
                             <label>Email Address</label>
-                            <input type="email" value="student@cvr.ac.in" disabled style="background: #f3f2ef; color: var(--text-light); cursor: not-allowed;">
+                            <input id="settingsEmail" type="email" value="student@cvr.ac.in" disabled style="background: #f3f2ef; color: var(--text-light); cursor: not-allowed;">
                         </div>
                         <div class="settings-form-group">
                             <label>Current Password</label>
-                            <input type="password" placeholder="Enter current password">
+                            <input id="deleteCurrentPassword" type="password" placeholder="Enter current password">
                         </div>
                         <div class="settings-form-group">
                             <label>New Password</label>
@@ -99,7 +99,7 @@
                     <div class="settings-card" style="margin-top: 24px; border-color: #fce8e6;">
                         <h3 style="color: #d93025; border-color: #fce8e6;">Danger Zone</h3>
                         <p style="font-size: 14px; color: var(--text-light); margin-bottom: 16px;">Once you delete your account, there is no going back. Please be certain.</p>
-                        <button class="btn-danger">Delete Account</button>
+                        <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
                     </div>
                 </div>
 
@@ -227,6 +227,30 @@
             }, 800);
         }
 
+        function deleteAccount() {
+            const currentPassword = document.getElementById('deleteCurrentPassword').value;
+            if (!currentPassword || !currentPassword.trim()) {
+                showToast("Please enter your current password.");
+                return;
+            }
+
+            const isConfirmed = confirm("This will permanently delete your account and all your data. Continue?");
+            if (!isConfirmed) return;
+
+            fetch("/profile/delete-account", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ currentPassword: currentPassword })
+            })
+            .then(async (res) => {
+                const message = await res.text();
+                if (!res.ok) throw new Error(message || "Failed to delete account.");
+                showToast(message || "Account deleted.");
+                setTimeout(() => window.location.href = "/login", 900);
+            })
+            .catch((err) => showToast(err.message || "Failed to delete account."));
+        }
+
         // Prefill with global data if available
         document.addEventListener('DOMContentLoaded', () => {
             fetch("/profile/data")
@@ -234,6 +258,7 @@
                 .then(user => {
                     if (user && user.username) {
                         document.getElementById('settingsName').value = user.username;
+                        document.getElementById('settingsEmail').value = user.email || '';
                         if(user.department) {
                             document.getElementById('settingsDept').value = user.department;
                         }
