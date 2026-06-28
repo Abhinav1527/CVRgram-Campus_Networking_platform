@@ -23,6 +23,8 @@ public class Message {
     private String content;
 
     private LocalDateTime timestamp = LocalDateTime.now();
+
+    private boolean isRead = false;
     
     public Message() {}
 

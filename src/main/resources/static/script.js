@@ -854,20 +854,27 @@ async function initGlobalNotifications() {
                     
                     // 1. Handle Active Chat Skip
                     if (window.location.pathname === '/chat' && typeof activeChatUser !== 'undefined' && activeChatUser && activeChatUser.id === msg.sender.id) {
+                        fetch(`/api/chat/mark-read/${msg.sender.id}`, { method: 'POST' });
                         return;
                     }
 
                     // 2. Update Chat Sidebar (if on chat page)
                     if (window.location.pathname === '/chat') {
                         const userItem = document.getElementById(`user-item-${msg.sender.id}`);
-                        if (userItem && !userItem.querySelector('.sidebar-dot')) {
-                            const dot = document.createElement('div');
-                            dot.className = 'sidebar-dot';
-                            Object.assign(dot.style, {
-                                width: '10px', height: '10px', backgroundColor: '#0073b1',
-                                borderRadius: '50%', marginLeft: 'auto', border: '1.5px solid white'
+                        if (userItem && !userItem.querySelector('.sidebar-badge')) {
+                            const badge = document.createElement('span');
+                            badge.className = 'sidebar-badge';
+                            Object.assign(badge.style, {
+                                fontSize: '11px', fontWeight: 'bold', color: '#ff4b4b',
+                                marginLeft: '8px', background: '#ffebeb', padding: '2px 6px',
+                                borderRadius: '4px', border: '1px solid #ffccd0', display: 'inline-block'
                             });
-                            userItem.appendChild(dot);
+                            badge.innerText = 'new message';
+                            
+                            const nameContainer = userItem.querySelector('div[style*="font-size: 14px"]');
+                            if (nameContainer) {
+                                nameContainer.appendChild(badge);
+                            }
                         }
                     }
                     
@@ -878,11 +885,25 @@ async function initGlobalNotifications() {
                 console.error("[NOTIFY] Connection failed, retrying in 5s...", err);
                 setTimeout(initGlobalNotifications, 5000);
             });
+
+            // Check for unread messages on login/load
+            fetch('/api/chat/unread')
+                .then(res => res.ok ? res.json() : [])
+                .then(unreadSenderIds => {
+                    if (unreadSenderIds && unreadSenderIds.length > 0) {
+                        showMessageBadge();
+                    } else {
+                        clearMessageBadge();
+                    }
+                })
+                .catch(err => console.error("Error fetching unread list", err));
+
         } else {
             console.warn("Global Notifications: WebSocket libraries not loaded on this page.");
         }
     } catch (e) { console.error('Global Notifications: Init error', e); }
-}
+}   
+
 
 function showMessageBadge() {
     const msgNav = document.querySelector('a[href="/chat"]');

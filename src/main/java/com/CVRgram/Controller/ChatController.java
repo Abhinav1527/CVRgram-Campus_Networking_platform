@@ -71,6 +71,39 @@ public class ChatController {
         return ResponseEntity.ok(history);
     }
 
+    // 🔹 API: Fetch unread messages sender IDs
+    @GetMapping("/api/chat/unread")
+    @ResponseBody
+    public ResponseEntity<List<Long>> getUnreadSenderIds(HttpSession session) {
+        User sessionUser = (User) session.getAttribute("loggedInUser");
+        if (sessionUser == null) return ResponseEntity.status(401).build();
+
+        User currentUser = userRepository.findByUsername(sessionUser.getUsername()).orElse(null);
+        if (currentUser == null) return ResponseEntity.status(401).build();
+
+        List<Message> unreadMessages = messageRepository.findByRecipientIdAndIsReadFalse(currentUser.getId());
+        List<Long> senderIds = unreadMessages.stream()
+                .map(m -> m.getSender().getId())
+                .distinct()
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(senderIds);
+    }
+
+    // 🔹 API: Mark messages as read
+    @org.springframework.web.bind.annotation.PostMapping("/api/chat/mark-read/{senderId}")
+    @ResponseBody
+    public ResponseEntity<Void> markAsRead(@PathVariable Long senderId, HttpSession session) {
+        User sessionUser = (User) session.getAttribute("loggedInUser");
+        if (sessionUser == null) return ResponseEntity.status(401).build();
+
+        User currentUser = userRepository.findByUsername(sessionUser.getUsername()).orElse(null);
+        if (currentUser == null) return ResponseEntity.status(401).build();
+
+        messageRepository.markAsRead(senderId, currentUser.getId());
+        return ResponseEntity.ok().build();
+    }
+
     // 🔹 WEBSOCKET PRIVATE MESSAGE HANDLING
     @MessageMapping("/chat.privateMessage")
     public void sendPrivateMessage(@Payload MessageRequest request) {

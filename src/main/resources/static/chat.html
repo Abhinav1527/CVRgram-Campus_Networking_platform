@@ -156,8 +156,12 @@
 
         async function loadFollowing() {
             try {
-                const res = await fetch('/api/chat/following');
-                followedUsers = await res.json();
+                const followingRes = await fetch('/api/chat/following');
+                followedUsers = await followingRes.json();
+                
+                const unreadRes = await fetch('/api/chat/unread');
+                const unreadSenderIds = unreadRes.ok ? await unreadRes.json() : [];
+
                 const list = document.getElementById('followingList');
                 
                 if (followedUsers.length === 0) {
@@ -167,11 +171,18 @@
 
                 list.innerHTML = followedUsers.map(user => {
                     const avatar = user.profilePhotoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random`;
+                    const hasUnread = unreadSenderIds.includes(user.id);
+                    const badgeHtml = hasUnread 
+                        ? `<span class="sidebar-badge" style="font-size: 11px; font-weight: bold; color: #ff4b4b; margin-left: 8px; background: #ffebeb; padding: 2px 6px; border-radius: 4px; border: 1px solid #ffccd0; display: inline-block;">new message</span>`
+                        : '';
                     return `
-                        <div onclick="selectUserById(${user.id})" class="following-item" id="user-item-${user.id}" style="padding: 12px 16px; display: flex; gap: 12px; cursor: pointer; border-bottom: 1px solid #f0f2f5;">
+                        <div onclick="selectUserById(${user.id})" class="following-item" id="user-item-${user.id}" style="padding: 12px 16px; display: flex; gap: 12px; cursor: pointer; border-bottom: 1px solid #f0f2f5; align-items: center;">
                             <img src="${avatar}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
                             <div style="flex: 1; overflow: hidden;">
-                                <div style="font-size: 14px; font-weight: 600;">${user.username}</div>
+                                <div style="font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">
+                                    <span>${user.username}</span>
+                                    ${badgeHtml}
+                                </div>
                                 <div style="font-size: 12px; color: var(--text-light); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">
                                     ${user.headline || 'View profile'}
                                 </div>
@@ -200,10 +211,23 @@
             const activeItem = document.getElementById(`user-item-${userId}`);
             if (activeItem) {
                 activeItem.style.background = '#eef3f8';
-                // Remove the "New Message" dot when selected
+                // Remove the "New Message" badge when selected
+                const badge = activeItem.querySelector('.sidebar-badge');
+                if (badge) badge.remove();
                 const dot = activeItem.querySelector('.sidebar-dot');
                 if (dot) dot.remove();
             }
+
+            // Call backend API to mark messages as read
+            fetch(`/api/chat/mark-read/${userId}`, { method: 'POST' })
+                .then(() => fetch('/api/chat/unread'))
+                .then(res => res.ok ? res.json() : [])
+                .then(unreadSenderIds => {
+                    if (!unreadSenderIds || unreadSenderIds.length === 0) {
+                        clearMessageBadge();
+                    }
+                })
+                .catch(e => console.error("Error marking messages as read:", e));
 
             if (isConnected && stompClient) {
                 if (currentSubscription) currentSubscription.unsubscribe();

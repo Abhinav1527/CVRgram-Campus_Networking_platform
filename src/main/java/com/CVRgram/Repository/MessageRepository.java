@@ -10,4 +10,11 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findConversation(@org.springframework.data.repository.query.Param("u1") Long u1, @org.springframework.data.repository.query.Param("u2") Long u2);
 
     void deleteBySenderIdOrRecipientId(Long senderId, Long recipientId);
+
+    List<Message> findByRecipientIdAndIsReadFalse(Long recipientId);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    @org.springframework.data.jpa.repository.Query("UPDATE Message m SET m.isRead = true WHERE m.sender.id = :senderId AND m.recipient.id = :recipientId AND m.isRead = false")
+    void markAsRead(@org.springframework.data.repository.query.Param("senderId") Long senderId, @org.springframework.data.repository.query.Param("recipientId") Long recipientId);
 }

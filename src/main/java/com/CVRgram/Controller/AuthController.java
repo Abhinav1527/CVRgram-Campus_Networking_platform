@@ -81,6 +81,8 @@ public class AuthController {
 
         userRepository.save(user);
 
+        System.out.println("\n*** DEBUG OTP for " + email + " is: " + otp + " ***\n");
+
         sendOtpEmail(email, otp);
 
         return "OTP Sent to your email.";
